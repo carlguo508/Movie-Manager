@@ -5,10 +5,16 @@ A modern, aesthetically pleasing web application to manage your movie and TV sho
 ## Features
 
 - 📋 **Classification System**: Organize content into Want to Watch, Watching, and Watched
-- 🎭 **Genre & Type Selection**: Categorize by 10+ genres and media types (Movie, TV Show, Reality Show)
+- 🔍 **Smart Search & Filter**: Real-time search and advanced filtering by genre, type, and rating
+- 🎭 **Genre Browser**: Visual way to browse your collection by genre
+- ✏️ **Edit & Manage**: Edit movie details and safely delete with confirmation
 - ⭐ **Rating System**: Rate watched content on a 1-10 star scale
 - 📝 **Reviews**: Write your thoughts and track when you watched
-- 🎲 **Recommendation Engine**: Get random suggestions from your "Want to Watch" list
+- 🎲 **Smart Recommendations**: 
+  - Random Pick (truly random!)
+  - Genre-based (based on your favorites)
+  - Highest Rated (critically acclaimed)
+- 🎬 **TMDB Integration**: Automatic metadata fetching (posters, cast, runtime, etc.)
 - 💾 **Data Persistence**: All data saved locally in your browser
 - 🎨 **Modern UI**: Dark theme with smooth animations and responsive design
 

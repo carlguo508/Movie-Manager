@@ -79,10 +79,10 @@ export function MovieForm() {
           poster: movieData.poster || `https://placehold.co/400x600/1f2937/9ca3af?text=${encodeURIComponent(movieData.title)}`,
         });
 
-        // Show success briefly then navigate
+        // Reset adding state after a brief delay to show "Added!" feedback
         setTimeout(() => {
-          navigate('/');
-        }, 800);
+          setAddingId(null);
+        }, 1500);
       }
     } catch (error) {
       console.error('Error adding movie:', error);

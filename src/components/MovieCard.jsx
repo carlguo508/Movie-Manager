@@ -31,7 +31,7 @@ export function MovieCard({ movie }) {
         exit={{ opacity: 0, scale: 0.9 }}
         className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl hover:shadow-2xl hover:border-gray-600 transition-all duration-300"
       >
-        <div className="aspect-[2/3] relative overflow-hidden">
+        <div className="aspect-square relative overflow-hidden">
           <img
             src={movie.poster || `https://placehold.co/400x600/2a2a2a/FFF?text=${encodeURIComponent(movie.title)}`}
             alt={movie.title}
@@ -52,11 +52,11 @@ export function MovieCard({ movie }) {
           )}
         </div>
 
-        <div className="p-4">
-          <h3 className="text-lg font-bold text-white mb-1 truncate" title={movie.title}>{movie.title}</h3>
+        <div className="p-2">
+          <h3 className="text-sm font-bold text-white mb-0.5 truncate" title={movie.title}>{movie.title}</h3>
 
           {/* Year and Runtime */}
-          <div className="flex items-center gap-3 text-xs text-gray-400 mb-2">
+          <div className="flex items-center gap-2 text-xs text-gray-400 mb-1">
             {movie.year && (
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />
@@ -73,68 +73,70 @@ export function MovieCard({ movie }) {
 
           {/* Genres */}
           {movie.genres && movie.genres.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-2">
-              {movie.genres.slice(0, 3).map((genre) => (
-                <span key={genre} className="px-2 py-0.5 bg-purple-600/20 text-purple-400 rounded text-xs border border-purple-500/30">
+            <div className="flex flex-wrap gap-1 mb-1">
+              {movie.genres.slice(0, 2).map((genre) => (
+                <span key={genre} className="px-1.5 py-0.5 bg-purple-600/20 text-purple-400 rounded text-xs border border-purple-500/30">
                   {genre}
                 </span>
               ))}
             </div>
           )}
 
-          {/* Actors */}
-          {movie.actors && movie.actors.length > 0 && (
-            <div className="text-xs text-gray-500 mb-2 truncate">
-              {movie.actors.slice(0, 2).join(', ')}
-            </div>
-          )}
-
           {movie.status === 'seen' && (
-            <div className="mb-3 pt-2 border-t border-gray-700/50">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-yellow-400 font-bold">{movie.rating}</span>
+            <div className="mb-1 pt-1 border-t border-gray-700/50">
+              <div className="flex items-center gap-1">
+                <span className="text-yellow-400 font-bold text-sm">{movie.rating}</span>
                 <Rating value={movie.rating} readOnly />
               </div>
-              {movie.review && (
-                <p className="text-gray-400 text-sm line-clamp-2 italic">"{movie.review}"</p>
-              )}
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-700/50">
-            <div className="flex gap-2">
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-700/50">
+            <div className="flex gap-1">
               {movie.status !== 'seen' && (
                 <button
-                  onClick={() => updateMovieStatus(movie.id, 'seen')}
-                  className="p-2 rounded-full hover:bg-green-500/20 text-gray-400 hover:text-green-400 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateMovieStatus(movie.id, 'seen');
+                  }}
+                  className="p-1.5 rounded-full hover:bg-green-500/20 text-gray-400 hover:text-green-400 transition-colors"
                   title="Mark as Seen"
                 >
-                  <CheckCircle className="w-5 h-5" />
+                  <CheckCircle className="w-4 h-4" />
                 </button>
               )}
               {movie.status !== 'watching' && (
                 <button
-                  onClick={() => updateMovieStatus(movie.id, 'watching')}
-                  className="p-2 rounded-full hover:bg-blue-500/20 text-gray-400 hover:text-blue-400 transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateMovieStatus(movie.id, 'watching');
+                  }}
+                  className="p-1.5 rounded-full hover:bg-blue-500/20 text-gray-400 hover:text-blue-400 transition-colors"
                   title="Mark as Watching"
                 >
-                  <FilmIcon className="w-5 h-5" />
+                  <FilmIcon className="w-4 h-4" />
                 </button>
               )}
               <button
-                onClick={() => setShowEditModal(true)}
-                className="p-2 rounded-full hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-colors"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowEditModal(true);
+                }}
+                className="p-1.5 rounded-full hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-colors"
                 title="Edit"
               >
-                <Edit2 className="w-5 h-5" />
+                <Edit2 className="w-4 h-4" />
               </button>
             </div>
             <button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="p-2 rounded-full hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteConfirm(true);
+              }}
+              className="p-1.5 rounded-full hover:bg-red-500/20 text-gray-400 hover:text-red-400 transition-colors"
               title="Delete"
             >
-              <Trash2 className="w-5 h-5" />
+              <Trash2 className="w-4 h-4" />
             </button>
           </div>
         </div>

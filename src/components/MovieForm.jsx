@@ -84,7 +84,7 @@ export function MovieForm() {
           setAddingId(null);
           setSearchQuery('');
           setSearchResults([]);
-        }, 500);
+        }, 200);
       }
     } catch (error) {
       console.error('Error adding movie:', error);

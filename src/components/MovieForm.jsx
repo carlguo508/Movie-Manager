@@ -1,56 +1,95 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Plus, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Loader2, CheckCircle } from 'lucide-react';
 import { useMovieStore } from '../store/useMovieStore';
 import { useNavigate } from 'react-router-dom';
-
-const GENRES = ['Action', 'Comedy', 'Drama', 'Horror', 'Sci-Fi', 'Romance', 'Thriller', 'Documentary', 'Animation', 'Fantasy'];
-const MEDIA_TYPES = ['Movie', 'TV Show', 'Reality Show'];
+import { tmdbService } from '../services/tmdbApi';
 
 export function MovieForm() {
   const navigate = useNavigate();
   const { addMovie } = useMovieStore();
-  const [formData, setFormData] = useState({
-    title: '',
-    type: 'Movie',
-    genres: [],
-    poster: '',
-  });
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [addingId, setAddingId] = useState(null);
 
-  const handleGenreToggle = (genre) => {
-    setFormData(prev => ({
-      ...prev,
-      genres: prev.genres.includes(genre)
-        ? prev.genres.filter(g => g !== genre)
-        : [...prev.genres, genre]
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.title.trim()) return;
-
-    addMovie({
-      ...formData,
-      poster: formData.poster || `https://placehold.co/400x600/1f2937/9ca3af?text=${encodeURIComponent(formData.title)}`,
-    });
-
-    setFormData({ title: '', type: 'Movie', genres: [], poster: '' });
-    navigate('/');
-  };
-
-  // Mock search simulation
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!searchQuery.trim()) return;
 
-    // Simulate finding a movie with auto-generated poster
-    setFormData({
-      title: searchQuery,
-      type: 'Movie',
-      genres: [],
-      poster: `https://placehold.co/400x600/4c1d95/c4b5fd?text=${encodeURIComponent(searchQuery)}`,
-    });
+    setSearching(true);
+    const results = await tmdbService.searchMovies(searchQuery);
+    setSearchResults(results);
+    setSearching(false);
+  };
+
+  const handleSelectResult = async (result, index) => {
+    setAddingId(index);
+
+    try {
+      // If we have a real TMDB ID, fetch full details
+      let movieData;
+      // TMDB IDs are numbers, mock IDs are strings starting with 'mock-'
+      const isRealTmdbId = result.tmdbId && typeof result.tmdbId === 'number';
+
+      if (isRealTmdbId) {
+        const details = await tmdbService.getMovieDetails(result.tmdbId, result.mediaType === 'TV Show' ? 'tv' : 'movie');
+        if (details) {
+          movieData = {
+            title: details.title,
+            type: details.mediaType,
+            genres: details.genres || [],
+            poster: details.poster,
+            year: details.year,
+            runtime: details.runtime,
+            actors: details.actors || [],
+            tmdbId: details.tmdbId,
+            overview: details.overview,
+          };
+        } else {
+          // If details fetch fails, use basic search result data
+          movieData = {
+            title: result.title,
+            type: result.mediaType,
+            genres: [],
+            poster: result.poster,
+            year: result.year,
+            runtime: '',
+            actors: [],
+            overview: result.overview,
+          };
+        }
+      } else {
+        // Use basic search result data
+        movieData = {
+          title: result.title,
+          type: result.mediaType,
+          genres: [],
+          poster: result.poster,
+          year: result.year,
+          runtime: '',
+          actors: [],
+          overview: result.overview,
+        };
+      }
+
+      // Add the movie directly
+      if (movieData) {
+        addMovie({
+          ...movieData,
+          poster: movieData.poster || `https://placehold.co/400x600/1f2937/9ca3af?text=${encodeURIComponent(movieData.title)}`,
+        });
+
+        // Show success briefly then navigate
+        setTimeout(() => {
+          navigate('/');
+        }, 800);
+      }
+    } catch (error) {
+      console.error('Error adding movie:', error);
+      // Reset state on error
+      setAddingId(null);
+      alert('Failed to add movie. Please try again.');
+    }
   };
 
   return (
@@ -67,7 +106,7 @@ export function MovieForm() {
         {/* Search Section */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Quick Search (Mock)
+            Search for a movie or TV show
           </label>
           <div className="flex gap-2">
             <input
@@ -75,126 +114,97 @@ export function MovieForm() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Search for a movie..."
+              placeholder="Type a title and press Enter..."
               className="flex-1 px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             />
             <button
               type="button"
               onClick={handleSearch}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20"
+              disabled={searching}
+              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-700 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20"
             >
-              <Search className="w-5 h-5" />
+              {searching ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Search className="w-5 h-5" />
+              )}
               Search
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            This is a mock search. Enter a title and click Search to auto-fill the form.
+          <p className="text-xs text-gray-500 mt-2">
+            Click on any result to add it to your "Want to Watch" list
           </p>
-        </div>
 
-        <div className="h-px bg-gray-700 my-6" />
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Title *
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Enter title..."
-              required
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Type
-            </label>
-            <div className="flex gap-2">
-              {MEDIA_TYPES.map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, type })}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all ${formData.type === type
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
-                      : 'bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-700'
-                    }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Genres
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {GENRES.map((genre) => (
-                <button
-                  key={genre}
-                  type="button"
-                  onClick={() => handleGenreToggle(genre)}
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${formData.genres.includes(genre)
-                      ? 'bg-pink-600 text-white shadow-lg shadow-pink-500/20'
-                      : 'bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-700'
-                    }`}
-                >
-                  {genre}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Poster URL (Optional)
-            </label>
-            <input
-              type="url"
-              value={formData.poster}
-              onChange={(e) => setFormData({ ...formData, poster: e.target.value })}
-              placeholder="https://example.com/poster.jpg"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-            />
-            {formData.poster && (
-              <div className="mt-3">
-                <img
-                  src={formData.poster}
-                  alt="Preview"
-                  className="w-32 h-48 object-cover rounded-lg border border-gray-700"
-                  onError={(e) => {
-                    e.target.src = `https://placehold.co/400x600/2a2a2a/FFF?text=Invalid+URL`;
-                  }}
-                />
-              </div>
+          {/* Search Results */}
+          <AnimatePresence>
+            {searchResults.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto"
+              >
+                {searchResults.map((result, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => handleSelectResult(result, index)}
+                    disabled={addingId !== null}
+                    className="w-full flex items-center gap-4 p-4 hover:bg-gray-800 transition-colors text-left border-b border-gray-700 last:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    whileHover={{ scale: addingId === null ? 1.01 : 1 }}
+                  >
+                    {result.poster ? (
+                      <img
+                        src={result.poster}
+                        alt={result.title}
+                        className="w-16 h-24 object-cover rounded shadow-lg"
+                      />
+                    ) : (
+                      <div className="w-16 h-24 bg-gray-700 rounded flex items-center justify-center text-gray-500 text-xs">
+                        No Image
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-white text-lg truncate group-hover:text-purple-400 transition-colors">
+                        {result.title}
+                      </div>
+                      <div className="text-sm text-gray-400 mt-1">
+                        {result.year && <span className="font-medium">{result.year}</span>}
+                        {result.year && result.mediaType && <span className="mx-2">•</span>}
+                        {result.mediaType && <span>{result.mediaType}</span>}
+                      </div>
+                      {result.overview && (
+                        <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+                          {result.overview}
+                        </p>
+                      )}
+                    </div>
+                    {addingId === index ? (
+                      <div className="flex items-center gap-2 text-green-400">
+                        <CheckCircle className="w-6 h-6" />
+                        <span className="text-sm font-medium">Added!</span>
+                      </div>
+                    ) : (
+                      <div className="text-gray-600 group-hover:text-purple-400 transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                        </svg>
+                      </div>
+                    )}
+                  </motion.button>
+                ))}
+              </motion.div>
             )}
-          </div>
+          </AnimatePresence>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="submit"
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-lg shadow-purple-500/30"
-            >
-              <Plus className="w-5 h-5" />
-              Add to List
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-medium transition-all flex items-center gap-2"
-            >
-              <X className="w-5 h-5" />
-              Cancel
-            </button>
-          </div>
-        </form>
+          {/* Empty State */}
+          {!searching && searchResults.length === 0 && searchQuery === '' && (
+            <div className="mt-8 text-center py-12 bg-gray-900/50 rounded-lg border border-gray-700">
+              <Search className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+              <p className="text-gray-400">Search for movies and TV shows to add to your collection</p>
+              <p className="text-sm text-gray-500 mt-1">Results will appear here</p>
+            </div>
+          )}
+        </div>
       </motion.div>
     </div>
   );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Film, List, PlusCircle, Tv } from 'lucide-react';
+import { Film, List, PlusCircle, Settings as SettingsIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export function Layout({ children }) {
@@ -9,6 +9,7 @@ export function Layout({ children }) {
   const navItems = [
     { path: '/', label: 'My List', icon: List },
     { path: '/add', label: 'Add New', icon: PlusCircle },
+    { path: '/settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   return (

@@ -14,6 +14,9 @@ export const useMovieStore = create(
       rateMovie: (id, rating, review, watchedAt) => set((state) => ({
         movies: state.movies.map((m) => m.id === id ? { ...m, rating, review, watchedAt, status: 'seen' } : m)
       })),
+      updateMovie: (id, updates) => set((state) => ({
+        movies: state.movies.map((m) => m.id === id ? { ...m, ...updates } : m)
+      })),
       deleteMovie: (id) => set((state) => ({
         movies: state.movies.filter((m) => m.id !== id)
       })),

@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Dices } from 'lucide-react';
 import { MovieCard } from './MovieCard';
 import { RatingModal } from './RatingModal';
+import { SearchBar } from './SearchBar';
+import { FilterPanel } from './FilterPanel';
 import { useMovieStore } from '../store/useMovieStore';
+import { getRecommendation } from '../lib/recommendations';
 
 export function MovieList() {
   const { movies } = useMovieStore();
   const [activeTab, setActiveTab] = useState('not-seen');
   const [ratingMovie, setRatingMovie] = useState(null);
   const [recommendation, setRecommendation] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [recommendAlgorithm, setRecommendAlgorithm] = useState('random');
+  const [filters, setFilters] = useState({
+    genres: [],
+    types: [],
+    minRating: 0,
+    sortBy: 'dateAdded',
+  });
 
   const tabs = [
     { id: 'not-seen', label: 'Want to Watch', count: movies.filter(m => m.status === 'not-seen').length },
@@ -17,7 +28,54 @@ export function MovieList() {
     { id: 'seen', label: 'Watched', count: movies.filter(m => m.status === 'seen').length },
   ];
 
-  const filteredMovies = movies.filter(m => m.status === activeTab);
+  // Filter and sort movies
+  const filteredMovies = useMemo(() => {
+    let result = movies.filter(m => m.status === activeTab);
+
+    // Apply search
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(m =>
+        m.title.toLowerCase().includes(query) ||
+        m.actors?.some(actor => actor.toLowerCase().includes(query)) ||
+        m.genres?.some(genre => genre.toLowerCase().includes(query))
+      );
+    }
+
+    // Apply genre filter
+    if (filters.genres.length > 0) {
+      result = result.filter(m =>
+        m.genres?.some(genre => filters.genres.includes(genre))
+      );
+    }
+
+    // Apply type filter
+    if (filters.types.length > 0) {
+      result = result.filter(m => filters.types.includes(m.type));
+    }
+
+    // Apply rating filter
+    if (filters.minRating > 0) {
+      result = result.filter(m => m.rating >= filters.minRating);
+    }
+
+    // Apply sorting
+    result.sort((a, b) => {
+      switch (filters.sortBy) {
+        case 'title':
+          return a.title.localeCompare(b.title);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'year':
+          return (b.year || 0) - (a.year || 0);
+        case 'dateAdded':
+        default:
+          return new Date(b.addedAt) - new Date(a.addedAt);
+      }
+    });
+
+    return result;
+  }, [movies, activeTab, searchQuery, filters]);
 
   const handleRecommend = () => {
     const notSeenMovies = movies.filter(m => m.status === 'not-seen');
@@ -25,12 +83,39 @@ export function MovieList() {
       alert('No movies in "Want to Watch" list!');
       return;
     }
-    const randomIndex = Math.floor(Math.random() * notSeenMovies.length);
-    setRecommendation(notSeenMovies[randomIndex]);
+    const recommended = getRecommendation(movies, recommendAlgorithm);
+    if (recommended) {
+      setRecommendation(recommended);
+    }
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      genres: [],
+      types: [],
+      minRating: 0,
+      sortBy: 'dateAdded',
+    });
   };
 
   return (
     <div>
+      {/* Search and Filter Bar */}
+      <div className="flex gap-3 mb-6">
+        <div className="flex-1">
+          <SearchBar
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onClear={() => setSearchQuery('')}
+          />
+        </div>
+        <FilterPanel
+          filters={filters}
+          onChange={setFilters}
+          onClear={clearFilters}
+        />
+      </div>
+
       {/* Tabs */}
       <div className="flex items-center justify-between mb-8">
         <div className="flex gap-2 bg-gray-800 p-1 rounded-xl border border-gray-700">
@@ -39,8 +124,8 @@ export function MovieList() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 ${activeTab === tab.id
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30'
+                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                 }`}
             >
               {tab.label}
@@ -52,21 +137,41 @@ export function MovieList() {
         </div>
 
         {activeTab === 'not-seen' && movies.filter(m => m.status === 'not-seen').length > 0 && (
-          <button
-            onClick={handleRecommend}
-            className="px-6 py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg shadow-yellow-500/30"
-          >
-            <Dices className="w-5 h-5" />
-            Recommend Me
-          </button>
+          <div className="flex items-center gap-2">
+            <select
+              value={recommendAlgorithm}
+              onChange={(e) => setRecommendAlgorithm(e.target.value)}
+              className="px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            >
+              <option value="random">🎲 Random</option>
+              <option value="genre">🎭 By Genre</option>
+              <option value="rating">⭐ Highest Rated</option>
+            </select>
+            <button
+              onClick={handleRecommend}
+              className="px-6 py-2.5 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg shadow-yellow-500/30"
+            >
+              <Dices className="w-5 h-5" />
+              Recommend
+            </button>
+          </div>
         )}
       </div>
+
+      {/* Results Count */}
+      {(searchQuery || filters.genres.length > 0 || filters.types.length > 0 || filters.minRating > 0) && (
+        <div className="mb-4 text-sm text-gray-400">
+          Showing {filteredMovies.length} of {movies.filter(m => m.status === activeTab).length} movies
+        </div>
+      )}
 
       {/* Movie Grid */}
       {filteredMovies.length === 0 ? (
         <div className="text-center py-20">
           <div className="text-gray-500 text-lg">
-            No movies in this category yet.
+            {searchQuery || filters.genres.length > 0 || filters.types.length > 0 || filters.minRating > 0
+              ? 'No movies match your filters.'
+              : 'No movies in this category yet.'}
           </div>
         </div>
       ) : (
@@ -119,6 +224,9 @@ export function MovieList() {
                 />
               </div>
               <h4 className="text-xl font-bold text-white mb-2">{recommendation.title}</h4>
+              {recommendation.year && (
+                <p className="text-gray-400 text-sm mb-2">{recommendation.year}</p>
+              )}
               {recommendation.genres && recommendation.genres.length > 0 && (
                 <div className="flex flex-wrap gap-2 justify-center mb-4">
                   {recommendation.genres.map((genre) => (

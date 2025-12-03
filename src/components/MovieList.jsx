@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Dices } from 'lucide-react';
+import { Sparkles, Dices, Grid3x3 } from 'lucide-react';
 import { MovieCard } from './MovieCard';
 import { RatingModal } from './RatingModal';
 import { SearchBar } from './SearchBar';
 import { FilterPanel } from './FilterPanel';
+import { GenreBrowser } from './GenreBrowser';
 import { useMovieStore } from '../store/useMovieStore';
 import { getRecommendation } from '../lib/recommendations';
 
@@ -15,6 +16,7 @@ export function MovieList() {
   const [recommendation, setRecommendation] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [recommendAlgorithm, setRecommendAlgorithm] = useState('random');
+  const [showGenreBrowser, setShowGenreBrowser] = useState(false);
   const [filters, setFilters] = useState({
     genres: [],
     types: [],
@@ -109,6 +111,14 @@ export function MovieList() {
             onClear={() => setSearchQuery('')}
           />
         </div>
+        <button
+          onClick={() => setShowGenreBrowser(true)}
+          className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-white hover:bg-gray-700 transition-all flex items-center gap-2"
+          title="Browse by Genre"
+        >
+          <Grid3x3 className="w-5 h-5" />
+          Genres
+        </button>
         <FilterPanel
           filters={filters}
           onChange={setFilters}

@@ -7,6 +7,7 @@ export function getRandomRecommendation(movies) {
   const notSeenMovies = movies.filter(m => m.status === 'not-seen');
   if (notSeenMovies.length === 0) return null;
 
+  // Use Math.random() with current timestamp for better randomization
   const randomIndex = Math.floor(Math.random() * notSeenMovies.length);
   return notSeenMovies[randomIndex];
 }

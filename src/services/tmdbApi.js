@@ -2,7 +2,7 @@ const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 class TMDBService {
   constructor() {
-    this.apiKey = localStorage.getItem('tmdb_api_key') || '';
+    this.apiKey = import.meta.env.VITE_TMDB_API_KEY || localStorage.getItem('tmdb_api_key') || '';
   }
 
   setApiKey(key) {

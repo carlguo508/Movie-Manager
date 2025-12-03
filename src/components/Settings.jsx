@@ -16,6 +16,8 @@ export function Settings() {
     }
   }, []);
 
+  const isEnvKey = !!import.meta.env.VITE_TMDB_API_KEY;
+
   const handleSave = async () => {
     tmdbService.setApiKey(apiKey);
     setSaved(true);
@@ -80,8 +82,16 @@ export function Settings() {
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               placeholder="Enter your TMDB API key..."
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono text-sm"
+              disabled={isEnvKey}
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all font-mono text-sm disabled:opacity-50 disabled:cursor-not-allowed"
             />
+
+            {isEnvKey && (
+              <div className="mt-2 text-xs text-purple-400 flex items-center gap-1">
+                <CheckCircle className="w-3 h-3" />
+                Using API key from environment configuration
+              </div>
+            )}
 
             {testResult === 'success' && (
               <div className="mt-3 flex items-center gap-2 text-green-400 text-sm">

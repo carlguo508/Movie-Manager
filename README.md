@@ -1,6 +1,6 @@
 # Movie Manager
 
-A modern, aesthetically pleasing web application to manage your movie and TV show watchlist.
+A modern, aesthetically pleasing web application to manage your movie and TV show watchlist. (Vibe Coding using Antigravity, claude sonnet 4.5)
 
 ## Features
 

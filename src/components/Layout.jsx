@@ -15,7 +15,7 @@ export function Layout({ children }) {
   return (
     <div className="min-h-screen bg-gray-900 text-white font-sans">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
             <Film className="w-6 h-6 text-purple-500" />
             MovieManager
@@ -39,7 +39,7 @@ export function Layout({ children }) {
           </div>
         </div>
       </nav>
-      <main className="pt-24 pb-12 px-4 max-w-5xl mx-auto">
+      <main className="pt-24 pb-12 px-4 max-w-7xl mx-auto">
         {children}
       </main>
     </div>

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, CheckCircle, Clock, Star, Trash2, Film as FilmIcon, Edit2 } from 'lucide-react';
+import { Calendar, CheckCircle, Clock, Star, Trash2, Film as FilmIcon } from 'lucide-react';
 import { Rating } from './Rating';
-import { EditMovieModal } from './EditMovieModal';
+import { MovieInfoModal } from './MovieInfoModal';
 import { cn } from '../lib/utils';
 import { useMovieStore } from '../store/useMovieStore';
 
 export function MovieCard({ movie }) {
   const { deleteMovie, updateMovieStatus } = useMovieStore();
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const statusColors = {
@@ -29,7 +29,8 @@ export function MovieCard({ movie }) {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl hover:shadow-2xl hover:border-gray-600 transition-all duration-300"
+        onClick={() => setShowInfoModal(true)}
+        className="group relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700 shadow-xl hover:shadow-2xl hover:border-gray-600 transition-all duration-300 cursor-pointer"
       >
         <div className="aspect-square relative overflow-hidden">
           <img
@@ -117,16 +118,6 @@ export function MovieCard({ movie }) {
                   <FilmIcon className="w-4 h-4" />
                 </button>
               )}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowEditModal(true);
-                }}
-                className="p-1.5 rounded-full hover:bg-purple-500/20 text-gray-400 hover:text-purple-400 transition-colors"
-                title="Edit"
-              >
-                <Edit2 className="w-4 h-4" />
-              </button>
             </div>
             <button
               onClick={(e) => {
@@ -142,11 +133,11 @@ export function MovieCard({ movie }) {
         </div>
       </motion.div>
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <EditMovieModal
+      {/* Info Modal */}
+      {showInfoModal && (
+        <MovieInfoModal
           movie={movie}
-          onClose={() => setShowEditModal(false)}
+          onClose={() => setShowInfoModal(false)}
         />
       )}
 

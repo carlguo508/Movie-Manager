@@ -2,6 +2,10 @@
 
 A modern, aesthetically pleasing web application to manage your movie and TV show watchlist. (Vibe Coding using Antigravity, claude sonnet 4.5)
 
+## Live Demo
+
+🚀 **[View Live Demo](https://carlguo508.github.io/Movie-Manager/)**
+
 ## Features
 
 - 📋 **Classification System**: Organize content into Want to Watch, Watching, and Watched
@@ -25,7 +29,7 @@ A modern, aesthetically pleasing web application to manage your movie and TV sho
 - **Tailwind CSS** - Styling
 - **Zustand** - State management
 - **Framer Motion** - Animations
-- **React Router** - Navigation
+- **React Router** - Navigation (HashRouter for static deployment)
 
 ## Getting Started
 
@@ -33,38 +37,55 @@ A modern, aesthetically pleasing web application to manage your movie and TV sho
 
 - Node.js (v14 or higher)
 - npm or yarn
+- TMDB API Key (free from [themoviedb.org](https://www.themoviedb.org/))
 
 ### Installation
 
+1. Clone the repository
 ```bash
-# Install dependencies
-npm install
+git clone https://github.com/carlguo508/Movie-Manager.git
+cd Movie-Manager
+```
 
-# Start development server
+2. Install dependencies
+```bash
+npm install
+```
+
+3. Configure API Key (Optional but recommended)
+Create a `.env.local` file in the root directory:
+```
+VITE_TMDB_API_KEY=your_api_key_here
+```
+
+4. Start development server
+```bash
 npm run dev
 ```
 
 The application will be available at `http://localhost:5173/`
 
-### Build for Production
+### Deployment
+
+This project is configured for GitHub Pages.
 
 ```bash
-npm run build
+npm run deploy
 ```
 
 ## Usage
 
-1. **Add Movies**: Click "Add New" to add movies/shows with genres
-2. **Manage Status**: Use the icons to mark content as Watching or Seen
-3. **Rate & Review**: Click on watched items to add ratings and reviews
-4. **Get Recommendations**: Click "Recommend Me" to get a random suggestion
+1. **Add Movies**: Click "Add New" to search TMDB and add movies/shows
+2. **Browse**: Use the Genre Browser or Search/Filter bar to find content
+3. **Manage**: Mark as Watching/Seen, Edit details, or Delete
+4. **Rate & Review**: Click on watched items to add ratings and reviews
+5. **Get Recommendations**: Click "Recommend Me" for smart suggestions
 
 ## Future Enhancements
 
-- Real API integration (TMDB, OMDb) for automatic poster fetching
-- Search and filter within your collection
-- Export/import watchlist
-- Multiple recommendation algorithms
+- Export/import watchlist (JSON backup)
+- Social sharing features
+- User accounts for cross-device sync
 
 ## License
 

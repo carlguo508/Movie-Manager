@@ -79,10 +79,12 @@ export function MovieForm() {
           poster: movieData.poster || `https://placehold.co/400x600/1f2937/9ca3af?text=${encodeURIComponent(movieData.title)}`,
         });
 
-        // Reset adding state after a brief delay to show "Added!" feedback
+        // Clear search and reset state for next movie
         setTimeout(() => {
           setAddingId(null);
-        }, 1500);
+          setSearchQuery('');
+          setSearchResults([]);
+        }, 500);
       }
     } catch (error) {
       console.error('Error adding movie:', error);
@@ -148,9 +150,9 @@ export function MovieForm() {
                   <motion.button
                     key={index}
                     onClick={() => handleSelectResult(result, index)}
-                    disabled={addingId !== null}
+                    disabled={addingId === index}
                     className="w-full flex items-center gap-4 p-4 hover:bg-gray-800 transition-colors text-left border-b border-gray-700 last:border-b-0 disabled:opacity-50 disabled:cursor-not-allowed group"
-                    whileHover={{ scale: addingId === null ? 1.01 : 1 }}
+                    whileHover={{ scale: addingId === index ? 1 : 1.01 }}
                   >
                     {result.poster ? (
                       <img

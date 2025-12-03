@@ -256,6 +256,12 @@ export function MovieList() {
           </motion.div>
         </div>
       )}
+      {/* Genre Browser Modal */}
+      {showGenreBrowser && (
+        <GenreBrowser
+          onClose={() => setShowGenreBrowser(false)}
+        />
+      )}
     </div>
   );
 }

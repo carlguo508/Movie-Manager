@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { Calendar, CheckCircle, Clock, Star, Trash2, Film as FilmIcon } from 'lucide-react';
 import { Rating } from './Rating';
 import { MovieInfoModal } from './MovieInfoModal';
+import { RatingModal } from './RatingModal';
 import { cn } from '../lib/utils';
 import { useMovieStore } from '../store/useMovieStore';
 
 export function MovieCard({ movie }) {
   const { deleteMovie, updateMovieStatus } = useMovieStore();
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const statusColors = {
@@ -84,10 +86,19 @@ export function MovieCard({ movie }) {
           )}
 
           {movie.status === 'seen' && (
-            <div className="mb-1 pt-1 border-t border-gray-700/50">
+            <div
+              className="mb-1 pt-1 border-t border-gray-700/50 -mx-2 px-2"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center gap-1">
-                <span className="text-yellow-400 font-bold text-sm">{movie.rating}</span>
-                <Rating value={movie.rating} readOnly />
+                <span className="text-yellow-400 font-bold text-sm">{movie.rating || '?'}</span>
+                <Rating
+                  value={movie.rating}
+                  onChange={(newRating) => {
+                    const { updateMovieRating } = useMovieStore.getState();
+                    updateMovieRating(movie.id, newRating);
+                  }}
+                />
               </div>
             </div>
           )}
@@ -138,6 +149,14 @@ export function MovieCard({ movie }) {
         <MovieInfoModal
           movie={movie}
           onClose={() => setShowInfoModal(false)}
+        />
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <RatingModal
+          movie={movie}
+          onClose={() => setShowRatingModal(false)}
         />
       )}
 

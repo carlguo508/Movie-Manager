@@ -191,9 +191,7 @@ export function MovieList() {
         >
           <AnimatePresence>
             {filteredMovies.map((movie) => (
-              <div key={movie.id} onClick={() => activeTab === 'seen' && setRatingMovie(movie)}>
-                <MovieCard movie={movie} />
-              </div>
+              <MovieCard key={movie.id} movie={movie} />
             ))}
           </AnimatePresence>
         </motion.div>

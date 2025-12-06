@@ -113,18 +113,20 @@ export function MovieInfoModal({ movie, onClose }) {
                   </div>
                 </div>
 
+
                 {/* Watched Date Input */}
                 <div>
-                  <label className="block text-sm font-medium text-yellow-400 mb-2 flex items-center gap-2">
-                    <Calendar className="w-5 h-5" />
-                    When did you watch it?
+                  <label className="block text-sm font-medium text-yellow-400 mb-3 flex items-center gap-2">
+                    <Calendar className="w-6 h-6 text-yellow-400" />
+                    <span className="text-base">When did you watch it?</span>
                   </label>
                   <div className="relative">
                     <input
                       type="date"
                       value={watchedAt}
                       onChange={handleWatchedAtChange}
-                      className="w-full px-4 py-3 bg-gray-800/50 border-2 border-yellow-500/30 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-sm cursor-pointer hover:border-yellow-500/50"
+                      className="w-full px-4 py-3.5 bg-gray-800/50 border-2 border-yellow-500/40 rounded-lg text-gray-100 text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition-all cursor-pointer hover:border-yellow-500/60 hover:bg-gray-800/70"
+                      style={{ colorScheme: 'dark' }}
                     />
                   </div>
                 </div>

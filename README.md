@@ -2,9 +2,6 @@
 
 A modern, aesthetically pleasing web application to manage your movie and TV show watchlist. (Vibe Coding using Antigravity, claude sonnet 4.5)
 
-## Live Demo
-
-🚀 **[View Live Demo](https://carlguo508.github.io/Movie-Manager/)**
 
 ## Features
 \

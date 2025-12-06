@@ -110,11 +110,20 @@ export function MovieForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div
+      className="max-w-2xl mx-auto min-h-screen flex items-start pt-8 pb-8"
+      onClick={(e) => {
+        // If clicking directly on the container (not on the form), navigate back
+        if (e.target === e.currentTarget) {
+          navigate('/');
+        }
+      }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl p-8"
+        className="bg-gray-800 rounded-2xl border border-gray-700 shadow-2xl p-8 w-full"
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside form from bubbling
       >
         <h2 className="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
           Add New Movie/Show

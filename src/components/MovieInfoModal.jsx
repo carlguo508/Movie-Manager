@@ -12,11 +12,15 @@ export function MovieInfoModal({ movie, onClose }) {
   // Local state for immediate UI feedback
   const [rating, setRating] = useState(movie.rating || 0);
   const [review, setReview] = useState(movie.review || '');
+  const [watchedAt, setWatchedAt] = useState(
+    movie.watchedAt ? new Date(movie.watchedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+  );
 
   // Sync state if movie prop updates
   useEffect(() => {
     setRating(movie.rating || 0);
     setReview(movie.review || '');
+    setWatchedAt(movie.watchedAt ? new Date(movie.watchedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
   }, [movie]);
 
   const handleRatingChange = (newRating) => {
@@ -28,6 +32,12 @@ export function MovieInfoModal({ movie, onClose }) {
     const newReview = e.target.value;
     setReview(newReview);
     updateMovie(movie.id, { review: newReview });
+  };
+
+  const handleWatchedAtChange = (e) => {
+    const newWatchedAt = e.target.value;
+    setWatchedAt(newWatchedAt);
+    updateMovie(movie.id, { watchedAt: newWatchedAt });
   };
 
   return (
@@ -101,6 +111,20 @@ export function MovieInfoModal({ movie, onClose }) {
                       <Rating value={rating} onChange={handleRatingChange} />
                     </div>
                   </div>
+                </div>
+
+                {/* Watched Date Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    When did you watch it?
+                  </label>
+                  <input
+                    type="date"
+                    value={watchedAt}
+                    onChange={handleWatchedAtChange}
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-transparent transition-all text-sm"
+                  />
                 </div>
 
                 {/* Notes Input */}

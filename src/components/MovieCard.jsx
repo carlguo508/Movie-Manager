@@ -87,9 +87,10 @@ export function MovieCard({ movie }) {
 
           {movie.status === 'seen' && (
             <div
-              className="mb-1 pt-1 border-t border-gray-700/50 -mx-2 px-2"
+              className="mb-1 pt-1 border-t border-gray-700/50 -mx-2 px-2 space-y-1"
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Rating */}
               <div className="flex items-center gap-1">
                 <span className="text-yellow-400 font-bold text-sm">{movie.rating || '?'}</span>
                 <Rating
@@ -99,6 +100,14 @@ export function MovieCard({ movie }) {
                   }}
                 />
               </div>
+
+              {/* Watched Date */}
+              {movie.watchedAt && (
+                <div className="flex items-center gap-1 text-xs text-gray-400">
+                  <Calendar className="w-3 h-3" />
+                  <span>{new Date(movie.watchedAt).toLocaleDateString()}</span>
+                </div>
+              )}
             </div>
           )}
 

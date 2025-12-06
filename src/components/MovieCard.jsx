@@ -103,9 +103,9 @@ export function MovieCard({ movie }) {
 
               {/* Watched Date */}
               {movie.watchedAt && (
-                <div className="flex items-center gap-1 text-xs text-gray-400">
-                  <Calendar className="w-3 h-3" />
-                  <span>{new Date(movie.watchedAt).toLocaleDateString()}</span>
+                <div className="flex items-center gap-1.5 text-xs text-blue-400">
+                  <Calendar className="w-4 h-4" />
+                  <span className="font-medium">{movie.watchedAt}</span>
                 </div>
               )}
             </div>

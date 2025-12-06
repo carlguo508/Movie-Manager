@@ -8,11 +8,10 @@ import { cn } from '../lib/utils';
 import { useMovieStore } from '../store/useMovieStore';
 
 export function MovieCard({ movie }) {
-  const { deleteMovie, updateMovieStatus } = useMovieStore();
+  const { deleteMovie, updateMovieStatus, updateMovie } = useMovieStore();
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [localRating, setLocalRating] = useState(movie.rating);
 
   const statusColors = {
     'seen': 'bg-green-500/20 text-green-400 border-green-500/50',
@@ -92,13 +91,11 @@ export function MovieCard({ movie }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-1">
-                <span className="text-yellow-400 font-bold text-sm">{localRating || '?'}</span>
+                <span className="text-yellow-400 font-bold text-sm">{movie.rating || '?'}</span>
                 <Rating
-                  value={localRating}
+                  value={movie.rating || 0}
                   onChange={(newRating) => {
-                    const { updateMovie } = useMovieStore.getState();
                     updateMovie(movie.id, { rating: newRating });
-                    setLocalRating(newRating);
                   }}
                 />
               </div>

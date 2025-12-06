@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Loader2, CheckCircle } from 'lucide-react';
 import { useMovieStore } from '../store/useMovieStore';
@@ -12,6 +12,21 @@ export function MovieForm() {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [addingId, setAddingId] = useState(null);
+  const searchContainerRef = useRef(null);
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setSearchResults([]);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
@@ -106,7 +121,7 @@ export function MovieForm() {
         </h2>
 
         {/* Search Section */}
-        <div className="mb-6">
+        <div className="mb-6" ref={searchContainerRef}>
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Search for a movie or TV show
           </label>
@@ -116,6 +131,13 @@ export function MovieForm() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              onFocus={() => {
+                if (searchQuery.trim() && searchResults.length === 0) {
+                  // Optional: Re-trigger search or just logic to show existing results if any? 
+                  // For now just keep simple. If they want search results back they search again or we persist them in state.
+                  // Current implementation clears results on close, so they need to search again.
+                }
+              }}
               placeholder="Type a title and press Enter..."
               className="flex-1 px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
             />
@@ -144,7 +166,8 @@ export function MovieForm() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mt-4 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto"
+                className="mt-4 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto absolute z-10 w-full max-w-[calc(100%-4rem)] shadow-2xl"
+                style={{ width: searchContainerRef.current?.offsetWidth }}
               >
                 {searchResults.map((result, index) => (
                   <motion.button

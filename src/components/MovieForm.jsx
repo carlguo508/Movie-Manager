@@ -166,8 +166,7 @@ export function MovieForm() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mt-4 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto absolute z-10 w-full max-w-[calc(100%-4rem)] shadow-2xl"
-                style={{ width: searchContainerRef.current?.offsetWidth }}
+                className="mt-4 bg-gray-900 border border-gray-700 rounded-lg overflow-hidden max-h-[500px] overflow-y-auto shadow-2xl"
               >
                 {searchResults.map((result, index) => (
                   <motion.button

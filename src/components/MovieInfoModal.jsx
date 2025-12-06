@@ -115,16 +115,18 @@ export function MovieInfoModal({ movie, onClose }) {
 
                 {/* Watched Date Input */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2 flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
+                  <label className="block text-sm font-medium text-yellow-400 mb-2 flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
                     When did you watch it?
                   </label>
-                  <input
-                    type="date"
-                    value={watchedAt}
-                    onChange={handleWatchedAtChange}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 focus:border-transparent transition-all text-sm"
-                  />
+                  <div className="relative">
+                    <input
+                      type="date"
+                      value={watchedAt}
+                      onChange={handleWatchedAtChange}
+                      className="w-full px-4 py-3 bg-gray-800/50 border-2 border-yellow-500/30 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all text-sm cursor-pointer hover:border-yellow-500/50"
+                    />
+                  </div>
                 </div>
 
                 {/* Notes Input */}

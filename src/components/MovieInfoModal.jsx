@@ -76,13 +76,20 @@ export function MovieInfoModal({ movie, onClose }) {
             {/* Rating */}
             {movie.status === 'seen' && movie.rating && (
               <div className="mb-4 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-3">
                   <span className="text-2xl font-bold text-yellow-400">{movie.rating}</span>
                   <Rating value={movie.rating} readOnly />
                 </div>
-                {movie.review && (
+              </div>
+            )}
+
+            {/* Notes */}
+            {movie.review && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white mb-2">Notes</h3>
+                <div className="p-4 bg-gray-700/30 rounded-lg border border-gray-700/50">
                   <p className="text-gray-300 italic">"{movie.review}"</p>
-                )}
+                </div>
               </div>
             )}
 
@@ -91,6 +98,16 @@ export function MovieInfoModal({ movie, onClose }) {
               <div className="mb-4">
                 <h3 className="text-lg font-semibold text-white mb-2">Overview</h3>
                 <p className="text-gray-300 leading-relaxed">{movie.overview}</p>
+              </div>
+            )}
+
+            {/* Director */}
+            {movie.director && (
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-white mb-2">Director</h3>
+                <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-lg text-sm border border-blue-500/30">
+                  {movie.director}
+                </span>
               </div>
             )}
 

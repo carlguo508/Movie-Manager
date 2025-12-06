@@ -14,6 +14,7 @@ export function EditMovieModal({ movie, onClose }) {
     runtime: movie.runtime || '',
     genres: movie.genres || [],
     type: movie.type || 'Movie',
+    review: movie.review || '',
   });
 
   const handleGenreToggle = (genre) => {
@@ -107,14 +108,27 @@ export function EditMovieModal({ movie, onClose }) {
                   type="button"
                   onClick={() => handleGenreToggle(genre)}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${formData.genres.includes(genre)
-                      ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
-                      : 'bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-700'
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20'
+                    : 'bg-gray-900 text-gray-400 hover:text-white hover:bg-gray-700'
                     }`}
                 >
                   {genre}
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              Notes
+            </label>
+            <textarea
+              value={formData.review}
+              onChange={(e) => setFormData({ ...formData, review: e.target.value })}
+              placeholder="Add your notes about the movie..."
+              rows={4}
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+            />
           </div>
 
           <div className="flex gap-3 pt-4">

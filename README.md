@@ -7,7 +7,7 @@ A modern, aesthetically pleasing web application to manage your movie and TV sho
 🚀 **[View Live Demo](https://carlguo508.github.io/Movie-Manager/)**
 
 ## Features
-
+\
 - 📋 **Classification System**: Organize content into Want to Watch, Watching, and Watched
 - 🔍 **Smart Search & Filter**: Real-time search and advanced filtering by genre, type, and rating
 - 🎭 **Genre Browser**: Visual way to browse your collection by genre

@@ -83,6 +83,10 @@ class TMDBService {
 
   formatMovieDetails(data, mediaType) {
     const isMovie = mediaType === 'movie';
+
+    // Extract director from crew
+    const director = data.credits?.crew?.find(person => person.job === 'Director')?.name || null;
+
     return {
       tmdbId: data.id,
       title: isMovie ? data.title : data.name,
@@ -95,6 +99,7 @@ class TMDBService {
       runtime: isMovie ? data.runtime : data.episode_run_time?.[0],
       genres: data.genres?.map(g => g.name) || [],
       actors: data.credits?.cast?.slice(0, 5).map(actor => actor.name) || [],
+      director: director,
       overview: data.overview,
       mediaType: mediaType === 'tv' ? 'TV Show' : 'Movie',
       tmdbRating: data.vote_average,
